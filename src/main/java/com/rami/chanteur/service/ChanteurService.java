@@ -1,11 +1,8 @@
 package com.rami.chanteur.service;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
 import com.rami.chanteur.Chanteur;
+import com.rami.chanteur.Hiphop;
+import java.util.List;
 
 public interface ChanteurService {
     Chanteur saveChanteur(Chanteur c);
@@ -14,5 +11,11 @@ public interface ChanteurService {
     void deleteChanteurById(Long id);
     Chanteur getChanteur(Long id);
     List<Chanteur> getAllChanteurs();
-    Page<Chanteur> getAllChanteursParPage(int page, int size);
+    List<Chanteur> findByNomChanteur(String nom);
+    List<Chanteur> findByNomChanteurContains(String nom);
+    List<Chanteur> findByNomCachet(String nom, Double cachet);
+    List<Chanteur> findByHiphop(Hiphop hiphop);
+    List<Chanteur> findByHiphopIdHiphop(Long id);
+    List<Chanteur> findByOrderByNomChanteurAsc();
+    List<Chanteur> trierChanteursNomCachet();
 }

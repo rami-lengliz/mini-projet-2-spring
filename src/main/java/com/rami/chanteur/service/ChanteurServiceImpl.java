@@ -1,12 +1,11 @@
 package com.rami.chanteur.service;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import com.rami.chanteur.Chanteur;
+import com.rami.chanteur.Hiphop;
 import com.rami.chanteur.repos.ChanteurRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class ChanteurServiceImpl implements ChanteurService {
@@ -40,11 +39,41 @@ public class ChanteurServiceImpl implements ChanteurService {
 
     @Override
     public List<Chanteur> getAllChanteurs() {
-        return chanteurRepository.findAll();  
+        return chanteurRepository.findAll();
     }
 
-	@Override
-	public Page<Chanteur> getAllChanteursParPage(int page, int size) {
-		return chanteurRepository.findAll(PageRequest.of(page, size));
-	}
+    @Override
+    public List<Chanteur> findByNomChanteur(String nom) {
+        return chanteurRepository.findByNomChanteur(nom);
+    }
+
+    @Override
+    public List<Chanteur> findByNomChanteurContains(String nom) {
+        return chanteurRepository.findByNomChanteurContains(nom);
+    }
+
+    @Override
+    public List<Chanteur> findByNomCachet(String nom, Double cachet) {
+        return chanteurRepository.findByNomCachet(nom, cachet);
+    }
+
+    @Override
+    public List<Chanteur> findByHiphop(Hiphop hiphop) {
+        return chanteurRepository.findByHiphop(hiphop);
+    }
+
+    @Override
+    public List<Chanteur> findByHiphopIdHiphop(Long id) {
+        return chanteurRepository.findByHiphopIdHiphop(id);
+    }
+
+    @Override
+    public List<Chanteur> findByOrderByNomChanteurAsc() {
+        return chanteurRepository.findByOrderByNomChanteurAsc();
+    }
+
+    @Override
+    public List<Chanteur> trierChanteursNomCachet() {
+        return chanteurRepository.trierChanteursNomCachet();
+    }
 }

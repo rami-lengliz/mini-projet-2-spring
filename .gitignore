@@ -31,3 +31,18 @@ build/
 
 ### VS Code ###
 .vscode/
+# Ignore compiled files
+target/
+
+# Ignore IDE files (Spring Tool Suite)
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+
+# Ignore local H2 database files (if any)
+*.db
+
+# Ignore macOS metadata
+.DS_Store
