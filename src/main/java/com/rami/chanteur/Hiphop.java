@@ -2,7 +2,10 @@ package com.rami.chanteur;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Data
@@ -17,7 +20,13 @@ public class Hiphop {
     private String nomHiphop;
     private String descriptionHiphop;
 
-    @OneToMany(mappedBy = "hiphop", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Chanteur> chanteurs;
+    @OneToMany(mappedBy = "hiphop")
+    @JsonIgnore 
+    
+    private List<Chanteur> chanteurs = new ArrayList<>();
+
+    public void addChanteur(Chanteur chanteur) {
+        chanteurs.add(chanteur);
+        chanteur.setHiphop(this);
+    }
 }

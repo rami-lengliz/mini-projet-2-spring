@@ -1,79 +1,137 @@
 package com.rami.chanteur.service;
 
+import com.rami.chanteur.dto.ChanteurDTO;
+import com.rami.chanteur.dto.HiphopDTO;
 import com.rami.chanteur.Chanteur;
 import com.rami.chanteur.Hiphop;
 import com.rami.chanteur.repos.ChanteurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChanteurServiceImpl implements ChanteurService {
+
     @Autowired
-    private ChanteurRepository chanteurRepository;
+    ChanteurRepository repo;
+
+    @Autowired
+    HiphopService hiphopService;
 
     @Override
-    public Chanteur saveChanteur(Chanteur c) {
-        return chanteurRepository.save(c);
+    public ChanteurDTO saveChanteur(ChanteurDTO chanteurDTO) {
+        Chanteur chanteur = convertToEntity(chanteurDTO);
+        chanteur = repo.save(chanteur);
+        return convertToDTO(chanteur);
     }
 
     @Override
-    public Chanteur updateChanteur(Chanteur c) {
-        return chanteurRepository.save(c);
-    }
-
-    @Override
-    public void deleteChanteur(Chanteur c) {
-        chanteurRepository.delete(c);
+    public ChanteurDTO updateChanteur(ChanteurDTO chanteurDTO) {
+        Chanteur chanteur = convertToEntity(chanteurDTO);
+        Chanteur updatedChanteur = repo.save(chanteur);
+        return convertToDTO(updatedChanteur);
     }
 
     @Override
     public void deleteChanteurById(Long id) {
-        chanteurRepository.deleteById(id);
+        repo.deleteById(id);
     }
 
     @Override
-    public Chanteur getChanteur(Long id) {
-        return chanteurRepository.findById(id).orElse(null);
+    public ChanteurDTO getChanteur(Long id) {
+        Chanteur chanteur = repo.findById(id).orElseThrow(() -> new RuntimeException("Chanteur not found with id: " + id));
+        return convertToDTO(chanteur);
     }
 
     @Override
-    public List<Chanteur> getAllChanteurs() {
-        return chanteurRepository.findAll();
+    public List<ChanteurDTO> getAllChanteurs() {
+        return repo.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<Chanteur> findByNomChanteur(String nom) {
-        return chanteurRepository.findByNomChanteur(nom);
+    public Page<ChanteurDTO> getAllChanteursParPage(int page, int size) {
+        Page<Chanteur> chanteurPage = repo.findAll(PageRequest.of(page, size));
+        return chanteurPage.map(this::convertToDTO);
     }
 
     @Override
-    public List<Chanteur> findByNomChanteurContains(String nom) {
-        return chanteurRepository.findByNomChanteurContains(nom);
+    public List<ChanteurDTO> findByNomChanteur(String nom) {
+        return repo.findByNomChanteur(nom).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<Chanteur> findByNomCachet(String nom, Double cachet) {
-        return chanteurRepository.findByNomCachet(nom, cachet);
+    public List<ChanteurDTO> findByNomChanteurContains(String nom) {
+        return repo.findByNomChanteurContains(nom).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<Chanteur> findByHiphop(Hiphop hiphop) {
-        return chanteurRepository.findByHiphop(hiphop);
+    public List<ChanteurDTO> findByNomCachet(String nom, Double cachet) {
+        return repo.findByNomCachet(nom, cachet).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<Chanteur> findByHiphopIdHiphop(Long id) {
-        return chanteurRepository.findByHiphopIdHiphop(id);
+    public List<ChanteurDTO> findByHiphop(HiphopDTO hiphopDTO) {
+        HiphopDTO hiphop = hiphopService.getHiphop(hiphopDTO.getIdHiphop());
+        return repo.findByHiphop(hiphop).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<Chanteur> findByOrderByNomChanteurAsc() {
-        return chanteurRepository.findByOrderByNomChanteurAsc();
+    public List<ChanteurDTO> findByHiphopIdHiphop(Long id) {
+        return repo.findByHiphopIdHiphop(id).stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     @Override
-    public List<Chanteur> trierChanteursNomCachet() {
-        return chanteurRepository.trierChanteursNomCachet();
+    public List<ChanteurDTO> findByOrderByNomChanteurAsc() {
+        return repo.findByOrderByNomChanteurAsc().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
+
+    @Override
+    public List<ChanteurDTO> trierChanteursNomsCachets() {
+        return repo.trierChanteursNomsCachets().stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    private ChanteurDTO convertToDTO(Chanteur chanteur) {
+        ChanteurDTO dto = new ChanteurDTO();
+        dto.setIdChanteur(chanteur.getIdChanteur());
+        dto.setNomChanteur(chanteur.getNomChanteur());
+        dto.setCachetChanteur(chanteur.getCachetChanteur());
+        dto.setDateDebut(chanteur.getDateDebut());
+        dto.setHiphop(convertToHiphopDTO(chanteur.getHiphop()));
+        return dto;
+    }
+
+    private HiphopDTO convertToHiphopDTO(Hiphop hiphop) {
+        if (hiphop == null) return null;
+        HiphopDTO dto = new HiphopDTO();
+        dto.setIdHiphop(hiphop.getIdHiphop());
+        dto.setNomHiphop(hiphop.getNomHiphop());
+        dto.setDescriptionHiphop(hiphop.getDescriptionHiphop());
+        return dto;
+    }
+
+
+    private Hiphop convertHiphopDTOToEntity(HiphopDTO hiphopDTO) {
+        if (hiphopDTO == null) {
+            return null;
+        }
+        Hiphop hiphop = new Hiphop();
+        hiphop.setIdHiphop(hiphopDTO.getIdHiphop());
+        hiphop.setNomHiphop(hiphopDTO.getNomHiphop());
+        hiphop.setDescriptionHiphop(hiphopDTO.getDescriptionHiphop());
+        return hiphop;
+    }
+    private Chanteur convertToEntity(ChanteurDTO chanteurDTO) {
+        Chanteur chanteur = new Chanteur();
+        chanteur.setIdChanteur(chanteurDTO.getIdChanteur());
+        chanteur.setNomChanteur(chanteurDTO.getNomChanteur());
+        chanteur.setCachetChanteur(chanteurDTO.getCachetChanteur());
+        chanteur.setDateDebut(chanteurDTO.getDateDebut());
+        chanteur.setHiphop(convertHiphopDTOToEntity(chanteurDTO.getHiphop())); // Convert HiphopDTO to Hiphop
+        return chanteur;
+    }
+    
 }

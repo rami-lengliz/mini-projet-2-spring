@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+>
+  <head>
+    <meta charset="utf-8" />
+    <title>Liste des Chanteurs</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="webjars/bootstrap/5.3.3/css/bootstrap.min.css"
+    />
+  </head>
+
+  <body>
+    <div th:replace="template"></div>
+
+    <div class="container mt-4">
+      <div class="card">
+        <div class="card-header">Liste des Chanteurs</div>
+
+        <div class="card-body">
+          <table class="table table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Cachet</th>
+                <th>Date de Début</th>
+                <th>Catégorie Hiphop</th>
+                <th sec:authorize="hasAuthority('ADMIN')">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="c : ${chanteurs}">
+                <td th:text="${c.idChanteur}"></td>
+                <td th:text="${c.nomChanteur}"></td>
+                <td th:text="${c.cachetChanteur}"></td>
+                <td th:text="${c.dateDebut}"></td>
+                <td
+                  th:if="${c.hiphop != null}"
+                  th:text="${c.hiphop.nomHiphop}"
+                ></td>
+                <td th:if="${c.hiphop == null}">Aucune catégorie</td>
+                <td sec:authorize="hasAuthority('ADMIN')">
+                  <a
+                    class="btn btn-danger btn-sm"
+                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce chanteur ?')"
+                    th:href="@{/supprimerChanteur(id=${c.idChanteur}, page=${currentPage}, size=${size})}"
+                  >
+                    Supprimer
+                  </a>
+                  <a
+                    class="btn btn-success btn-sm"
+                    th:href="@{/modifierChanteur(id=${c.idChanteur}, page=${currentPage}, size=${size})}"
+                  >
+                    Editer
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <nav>
+            <ul class="pagination justify-content-center">
+              <li class="page-item" th:each="page,status : ${pages}">
+                <a
+                  class="page-link"
+                  th:classappend="${status.index == currentPage} ? 'active' : ''"
+                  th:href="@{ListeChanteur(page=${status.index}, size=${size})}"
+                  th:text="${status.index}"
+                >
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

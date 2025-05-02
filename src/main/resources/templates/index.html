@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{template}">
+<head>
+    <meta charset="utf-8">
+    <title>Gestion des Chanteurs</title>
+    <link rel="stylesheet" href="webjars/bootstrap/5.3.3/css/bootstrap.min.css" />
+</head>
+<div layout:fragment="content">
+    <div class="container text-center mt-5">
+        <h1>Bienvenue dans la Gestion des Chanteurs</h1>
+        <a th:href="@{/ListeChanteur}" class="btn btn-primary">Voir la liste des chanteurs</a>
+    </div>
+</div>
+<script src="webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</html>

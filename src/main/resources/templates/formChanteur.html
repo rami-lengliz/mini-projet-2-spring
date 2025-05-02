@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8">
+    <title>Ajout des Chanteurs</title>
+    <link rel="stylesheet" href="webjars/bootstrap/5.3.3/css/bootstrap.min.css" />
+</head>
+<body>
+    <div th:replace="template"></div>
+
+    <div class="container mt-5">
+        <div class="card shadow rounded-3">
+            <div class="card-header bg-primary text-white fs-5" th:if="${mode=='new'}">Ajout des Chanteurs</div>
+            <div class="card-header bg-primary text-white fs-5" th:if="${mode=='edit'}">Modification des Chanteurs</div>
+
+            <div class="card-body">
+                <form th:action="@{saveChanteur}" method="post">
+                    <input hidden name="page" th:value="${page}" />
+                    <input hidden name="size" th:value="${size}" />
+
+                    <div th:if="${mode=='edit'}" class="mb-3">
+                        <label class="form-label">ID :</label>
+                        <input type="text" name="idChanteur" class="form-control" readonly th:value="${chanteur.idChanteur}" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Nom :</label>
+                        <input type="text" name="nomChanteur" class="form-control" th:value="${chanteur.nomChanteur}" required />
+                        <span th:errors="${chanteur.nomChanteur}" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Cachet :</label>
+                        <input type="number" step="0.01" name="cachetChanteur" class="form-control" th:value="${chanteur.cachetChanteur}" required />
+                        <span th:errors="${chanteur.cachetChanteur}" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Date de début :</label>
+                        <input type="date" name="dateDebut" class="form-control" th:value="${#dates.format(chanteur.dateDebut, 'yyyy-MM-dd')}" required />
+                        <span th:errors="${chanteur.dateDebut}" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Catégorie Hiphop :</label>
+                        <select name="hiphop.idHiphop" class="form-control" th:if="${chanteur.hiphop != null}">
+                            <option th:each="h : ${hiphops}"
+                                    th:value="${h.idHiphop}"
+                                    th:text="${h.nomHiphop}"
+                                    th:selected="${h.idHiphop == chanteur.hiphop.idHiphop}">
+                            </option>
+                        </select>
+                        <select name="hiphop.idHiphop" class="form-control" th:if="${chanteur.hiphop == null}">
+                            <option th:each="h : ${hiphops}"
+                                    th:value="${h.idHiphop}"
+                                    th:text="${h.nomHiphop}">
+                            </option>
+                        </select>
+                        <span th:errors="${chanteur.hiphop}" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">Valider</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
